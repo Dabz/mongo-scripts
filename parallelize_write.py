@@ -7,7 +7,7 @@
 ## Login   <d.gasparina@gmail.com>
 ##
 ## Started on  Fri 22 Apr 13:34:01 2016 gaspar_d
-## Last update Fri 29 Apr 10:30:31 2016 gaspar_d
+## Last update Fri  6 May 01:47:36 2016 gaspar_d
 ##
 
 import pymongo
@@ -19,25 +19,28 @@ import random
 import string
 import pprint
 import traceback
+import logging
 import os
+import sys
 
 
 def infinite_insert(t, mongo):
     a = 1
-    txt = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(1024*10))
+    txt = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(100))
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    collection = mongo.test.test
     while True:
         try:
-            mongo.test.test.insert_one({"thread": t, "number": a, "txt": txt})
-        except:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            pprint.pprint(time.ctime())
-            pprint.pprint(repr(traceback.format_exception(exc_type, exc_value, exc_traceback, limit=2)))
+            collection.insert_one({"thread": t, "number": a, "txt": txt})
+        except Exception as e:
+            logging.exception("Ohh noes!!!")
+            time.sleep(1*0.5)
 
             continue
 
 def infinite_multi_insert(t, mongos):
     threads = []
-    mongo = pymongo.MongoClient(mongos, maxPoolSize=100, waitQueueMultiple=1)
+    mongo = pymongo.MongoClient(mongos, maxPoolSize=30, waitQueueMultiple=2, connect=False)
     for i in range(30):
         threads.append(threading.Thread(target=infinite_insert, args=("%s-%d" % (t, i), mongo)))
 
@@ -48,11 +51,14 @@ def infinite_multi_insert(t, mongos):
         t.join()
 
 
-def main():
-    for i in range(0, 100):
-        mongos = "mongodb://root:root@127.0.0.1:20000,127.0.0.1:20001/admin"
-        pid    = os.fork()
-        if pid == 0:
-            infinite_multi_insert("mongos-%d" % i, mongos)
+def main(num_proc, fork=False):
+    for i in range(0, num_proc):
+        mongos = "mongodb://app:app@172.17.0.1:27017/admin"
+        if fork:
+          pid = os.fork()
+          if pid == 0:
+              infinite_multi_insert("mongos-%d" % i, mongos)
+        else:
+          infinite_multi_insert("mongos-%d" % i, mongos)
 
-main()
+main(int(sys.argv[1]))
