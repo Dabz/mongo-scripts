@@ -2,7 +2,7 @@ function massInsert(collection) {
   db  = db.getSiblingDB("test")
   txt = ""
 
-  for (i = 1; i < 100; i++) {
+  for (i = 1; i < 1000; i++) {
     txt = txt + i
   }
 
@@ -15,3 +15,6 @@ function massInsert(collection) {
     }
   }
 }
+
+
+massInsert(db.test)

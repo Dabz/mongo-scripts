@@ -1,0 +1,39 @@
+[ policy_match ]
+countryName = match
+stateOrProvinceName = match
+organizationName = match
+organizationalUnitName = optional
+commonName=test.com
+emailAddress = optional
+
+[req]
+prompt = no
+distinguished_name = dn
+default_md = sha256
+default_bits = 4096
+x509_extensions = v3_ca
+req_extensions = v3_req
+
+[ dn ]
+countryName = FR
+organizationName = Awesome
+localityName = AwesomeCity
+commonName=test.com
+
+[ v3_ca ]
+subjectKeyIdentifier=hash
+basicConstraints = critical,CA:true
+authorityKeyIdentifier=keyid:always,issuer:always
+keyUsage = critical,keyCertSign,cRLSign
+
+[ v3_req ]
+subjectKeyIdentifier = hash
+basicConstraints = CA:FALSE
+nsComment = "OpenSSL Generated Certificate"
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1=test.com
+IP.1=10.0.0.0

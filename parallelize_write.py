@@ -7,7 +7,7 @@
 ## Login   <d.gasparina@gmail.com>
 ##
 ## Started on  Fri 22 Apr 13:34:01 2016 gaspar_d
-## Last update Fri  6 May 01:47:36 2016 gaspar_d
+## Last update Mon  9 May 07:48:53 2016 gaspar_d
 ##
 
 import pymongo
@@ -34,8 +34,7 @@ def infinite_insert(t, mongo):
             collection.insert_one({"thread": t, "number": a, "txt": txt})
         except Exception as e:
             logging.exception("Ohh noes!!!")
-            time.sleep(1*0.5)
-
+            time.sleep(1)
             continue
 
 def infinite_multi_insert(t, mongos):

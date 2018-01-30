@@ -15,10 +15,10 @@ import pprint
 import time
 
 def main():
-    client = pymongo.MongoClient()
+    client = pymongo.MongoClient("mongodb://localhost:27017")
     collection = client.local.oplog.rs
 
-    cursor = collection.find({}, cursor_type=pymongo.CursorType.TAILABLE_AWAIT).max_await_time_ms(1000000)
+    cursor = collection.find({"op": "i", "ns": "test2.test"}, cursor_type=pymongo.CursorType.TAILABLE_AWAIT).max_await_time_ms(10000)
 
     while (cursor.alive):
         try:

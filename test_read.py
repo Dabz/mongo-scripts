@@ -14,7 +14,7 @@ import pymongo
 import time
 
 def main():
-  mongo = pymongo.MongoClient('mongodb://localhost:27018/?replicaSet=test&readPreference=primaryPreferred')
+  mongo = pymongo.MongoClient('mongodb://localhost:27017/?replicaSet=tisco&readPreference=primary')
   while 1:
     try:
       c = mongo.test.test.find_one()
